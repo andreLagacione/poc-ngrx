@@ -6,17 +6,22 @@ import { LoginComponent } from './login/login.component';
 import { ScoreboardPageComponent } from './scoreboard-page/scoreboard-page.component';
 import { StoreModule } from '@ngrx/store';
 import { scoreboardReducer } from './scoreboard-page/reducers/scoreboard.reducer';
+import { DocumentsCategoryComponent } from './components/documents-category/documents-category.component';
+import { CompanyDocumentsComponent } from './components/company-documents/company-documents.component';
+import { companyDocumentReducer } from './components/company-documents/reducers/company-documents.reducer';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    ScoreboardPageComponent
+    ScoreboardPageComponent,
+    DocumentsCategoryComponent,
+    CompanyDocumentsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({ game: scoreboardReducer })
+    StoreModule.forRoot({ game: scoreboardReducer, companyDocuments: companyDocumentReducer })
   ],
   providers: [],
   bootstrap: [AppComponent]
