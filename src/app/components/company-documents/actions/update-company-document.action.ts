@@ -3,5 +3,5 @@ import { ICompanyDocument } from "../models/company-document.interface";
 
 export const updateCompanyDocument = createAction(
     '[CompanyDocument] UpdateCompanyDocument',
-    props<ICompanyDocument>()
+    props<{ document: ICompanyDocument }>()
 );

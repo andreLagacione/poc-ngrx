@@ -7,19 +7,11 @@ const initialState: ICompanyDocument[] = [];
 
 export const companyDocumentReducer = createReducer(
     initialState,
-    on(addCompanyDocument, (state, { document }) => ([{
-        id: document.id,
-        title: document.title,
-        description: document.description,
-        isRequired: document.isRequired,
-        uploaded: document.uploaded,
-    }])),
-    // on(updateCompanyDocument, (state) => ({
-    //     id: state.id,
-    //     title: state.title,
-    //     description: state.description,
-    //     isRequired: state.isRequired,
-    //     uploaded: state.uploaded,
-
-    // }))
+    on(addCompanyDocument, (state, { document }) => ([...state, document])),
+    on(updateCompanyDocument, (state, { document }) => {
+        const clone: ICompanyDocument[] = JSON.parse(JSON.stringify(state));
+        const index = clone.findIndex(item => item.id === document.id);
+        clone.splice(index, 1, document);
+        return [...clone];
+    }),
 );
