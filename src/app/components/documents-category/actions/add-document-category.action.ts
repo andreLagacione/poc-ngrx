@@ -1,6 +1,7 @@
+import { createAction, props } from "@ngrx/store";
 import { IDocumentCategory } from "../models/document-category.interface";
 
-export class AddDocumentCategory {
-    static readonly type = '[Documents] AddDocumentCategory';
-    constructor (public document: IDocumentCategory) {}
-}
+export const addDocumentCategory = createAction(
+    '[Documents] AddDocumentCategory',
+    props<{ category: IDocumentCategory }>()
+);

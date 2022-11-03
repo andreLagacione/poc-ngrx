@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, take } from 'rxjs';
+import { updateDocumentCategory } from '../documents-category/actions/update-document-category.action';
 import { addCompanyDocument } from './actions/add-company-document.action';
 import { updateCompanyDocument } from './actions/update-company-document.action';
 import { ICompanyDocument } from './models/company-document.interface';
-import { hasCompanyDocuments } from './selectors/company-documents.selector';
+import { hasCompanyDocuments, documentList, AppState } from './selectors/company-documents.selector';
 import { CompanyDocumentsService } from './services/company-documents.service';
 
 @Component({
@@ -18,21 +19,23 @@ export class CompanyDocumentsComponent implements OnInit {
   documents$: Observable<ICompanyDocument[]> = this.store.select((state: any) => state.companyDocuments);
 
   constructor(
-    private store: Store,
+    private store: Store<AppState>,
     private companyDocumentsService: CompanyDocumentsService,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
-    this.store.select((state: any) => state.companyDocuments).pipe(
-      take(1)
-    ).subscribe(
+    this.store.select((state: AppState) => state.companyDocuments).subscribe(
       _response => {
         if (!_response.length) {
           setTimeout(() => {
             this.getDocuments();
           }, 3000);
+
+          return;
         }
+
+        this.checkIfRequiredDocumentWasUpdated(_response);
       }
     );
   }
@@ -57,12 +60,16 @@ export class CompanyDocumentsComponent implements OnInit {
   }
 
   uploadDocument(document: ICompanyDocument) {
-    this.store.dispatch(updateCompanyDocument({
-      document: {
-        ...document,
-        uploaded: true
+    this.companyDocumentsService.update().subscribe(
+      () => {
+        this.store.dispatch(updateCompanyDocument({
+          document: {
+            ...document,
+            uploaded: true
+          }
+        }));
       }
-    }))
+    );
   }
 
   voltar() {
@@ -70,7 +77,12 @@ export class CompanyDocumentsComponent implements OnInit {
   }
 
   checkIfRequiredDocumentWasUpdated(documents: ICompanyDocument[]) {
-    
+    const document = documents.find(item => item.isRequired && item.uploaded);
+    if (document) {
+      this.store.dispatch(updateDocumentCategory({
+        categoryId: document.id
+      }));
+    }
   }
 
 }
